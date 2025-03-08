@@ -16,28 +16,51 @@ import static org.mockito.Mockito.*;
 class MyDonutShopTest {
 
     MyDonutShop myDonutShop;
+    @Mock
+    PaymentService payment;
+    @Mock
+    DeliveryService delivery;
+    @Mock
+    BakeryService bakery;
 
     @BeforeEach
     void setUp() {
-
+        MockitoAnnotations.openMocks(this);
+    	myDonutShop = new MyDonutShop(payment, delivery, bakery);
+    	myDonutShop.openForTheDay();
     }
 
     @Test
     void itShouldTakeDeliveryOrder() throws Exception {
         //given
-
+        Order order = new Order("CUSTOMER_NAME",
+                "CUSTOMER_PHONE_NUMBER",
+                1,
+                5.00,
+                "CREDIT_CARD_NUMBER",
+                true);
         //when
-
+        when(bakery.getDonutsRemaining()).thenReturn(1);
+        when(payment.charge(order)).thenReturn(true);
+    	myDonutShop.takeOrder(order);
         //then
+    	verify(delivery, times(1)).scheduleDelivery(order);
     }
 
     @Test
     void givenInsufficientDonutsRemaining_whenTakeOrder_thenThrowIllegalArgumentException() {
         //given
-
+        Order order = new Order("CUSTOMER_NAME",
+                "CUSTOMER_PHONE_NUMBER",
+                1,
+                5.00,
+                "CREDIT_CARD_NUMBER",
+                true);
         //when
-
+        when(bakery.getDonutsRemaining()).thenReturn(0);
+        Throwable exceptionThrown = assertThrows(Exception.class, () -> myDonutShop.takeOrder(order));
         //then
+        assertEquals(exceptionThrown, "Insufficient donuts remaining");
     }
 
     @Test

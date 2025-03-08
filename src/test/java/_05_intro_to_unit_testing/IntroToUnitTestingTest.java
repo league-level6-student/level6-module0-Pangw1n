@@ -6,7 +6,7 @@ import javax.swing.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class introToUnitTestingTest {
+class IntroToUnitTestingTest {
 
     IntroToUnitTesting introToUnitTesting = new IntroToUnitTesting();
 
